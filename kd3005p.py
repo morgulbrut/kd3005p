@@ -72,7 +72,7 @@ class kd3005pInstrument:
             self.status = self.getStatus()
         except:
             print(Fore.RED + "COM port failure:")
-            print(Fore.RED + sys.exc_info())
+            print(Fore.RED + str(sys.exc_info()))
             self.psu_com = None
             self.is_connected = False
             sys.exit(1)
