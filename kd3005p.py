@@ -19,8 +19,8 @@
 #  MA 02110-1301, USA.
 #
 #
-# Requirement: pyserial
-#
+# Requirement: pyserial, colorama
+
 # getIdn() - Get instrument identification
 # setVolt(tal) - Set the voltage on the output
 # getVolt() - Get the 'set' voltage
@@ -37,6 +37,7 @@ import sys
 import time
 import serial
 import serial.tools.list_ports
+from colorama import Fore, init
 
 
 class kd3005pInstrument:
@@ -47,14 +48,15 @@ class kd3005pInstrument:
 
     def __init__(self, usb_ids="0416:5011"):
         self.usb_ids = usb_ids
+        init(autoreset=True)
         try:
             for p, desc, hwid in sorted(serial.tools.list_ports.comports()):
-                print("{}: {} [{}]".format(p, desc, hwid))
+                # print("{}: {} [{}]".format(p, desc, hwid))
                 if hwid.split(" ")[1].split("=")[1] == self.usb_ids:
                     self.port_name = p
             print(self.port_name)
         except IndexError:
-            print("No powersupply found")
+            print(Fore.RED + "No powersupply found")
             sys.exit(1)
 
         try:
@@ -69,10 +71,11 @@ class kd3005pInstrument:
             self.is_connected = True
             self.status = self.getStatus()
         except:
-            print("COM port failure:")
-            print(sys.exc_info())
+            print(Fore.RED + "COM port failure:")
+            print(Fore.RED + sys.exc_info())
             self.psu_com = None
             self.is_connected = False
+            sys.exit(1)
 
     def close(self):
         self.psu_com.close()
