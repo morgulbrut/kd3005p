@@ -40,7 +40,7 @@ import serial.tools.list_ports
 
 
 class kd3005pInstrument:
-    isConnected = False
+    is_connected = False
     psu_com = None
     port_name = "COM1"
     status = {}
@@ -62,18 +62,18 @@ class kd3005pInstrument:
                 bytesize=serial.EIGHTBITS
             )
             self.psu_com.isOpen()
-            self.isConnected = True
+            self.is_connected = True
             self.status = self.getStatus()
         except:
             print("COM port failure:")
             print(sys.exc_info())
             self.psu_com = None
-            self.isConnected = False
+            self.is_connected = False
 
     def close(self):
         self.psu_com.close()
 
-    def serWriteAndRecieve(self, data, delay=0.05):  # data er ein stre
+    def ser_write_and_recieve(self, data, delay=0.05):  # data er ein stre
         self.psu_com.write(data.encode())
         out = ''
         time.sleep(delay)
@@ -83,43 +83,43 @@ class kd3005pInstrument:
             return out
         return None
 
-    def getIdn(self):
-        return self.serWriteAndRecieve("*IDN?", 0.3)
+    def get_Idn(self):
+        return self.ser_write_and_recieve("*IDN?", 0.3)
 
-    def setVolt(self, voltage, delay=0.01):
-        self.serWriteAndRecieve("VSET1:"+"{:1.2f}".format(voltage))
+    def set_voltage(self, voltage, delay=0.01):
+        self.ser_write_and_recieve("VSET1:"+"{:1.2f}".format(voltage))
         time.sleep(delay)
 
-    def getVolt(self):
-        return self.serWriteAndRecieve("VSET1?")
+    def get_voltage(self):
+        return self.ser_write_and_recieve("VSET1?")
 
-    def readVolt(self):
-        return self.serWriteAndRecieve("VOUT1?")
+    def read_voltage(self):
+        return self.ser_write_and_recieve("VOUT1?")
 
-    def setAmp(self, amp, delay=0.01):
-        self.serWriteAndRecieve("ISET1:"+"{:1.3f}".format(amp))
+    def set_current(self, amp, delay=0.01):
+        self.ser_write_and_recieve("ISET1:"+"{:1.3f}".format(amp))
         time.sleep(delay)
 
-    def getAmp(self):
-        return self.serWriteAndRecieve("ISET1?")
+    def get_current(self):
+        return self.ser_write_and_recieve("ISET1?")
 
-    def readAmp(self):
-        return self.serWriteAndRecieve("IOUT1?")
+    def read_current(self):
+        return self.ser_write_and_recieve("IOUT1?")
 
-    def setOut(self, state):
+    def set_out(self, state):
         if(state == True):
-            self.serWriteAndRecieve("OUT1")
+            self.ser_write_and_recieve("OUT1")
         elif(state == False):
-            self.serWriteAndRecieve("OUT0")
+            self.ser_write_and_recieve("OUT0")
 
-    def setOcp(self, state):
+    def set_opc(self, state):
         if(state == True):
-            self.serWriteAndRecieve("OCP1")
+            self.ser_write_and_recieve("OCP1")
         elif(state == False):
-            self.serWriteAndRecieve("OCP0")
+            self.ser_write_and_recieve("OCP0")
 
-    def getStatus(self):
-        stat = ord(self.serWriteAndRecieve("STATUS?")[0])
+    def get_status(self):
+        stat = ord(self.ser_write_and_recieve("STATUS?")[0])
         if (stat & (1 << 0)) == 0:
             self.status["Mode"] = "CC"
         else:
