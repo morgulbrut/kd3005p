@@ -47,11 +47,15 @@ class kd3005pInstrument:
 
     def __init__(self, usb_ids="0416:5011"):
         self.usb_ids = usb_ids
-        for p, desc, hwid in sorted(serial.tools.list_ports.comports()):
-            print("{}: {} [{}]".format(p, desc, hwid))
-            if hwid.split(" ")[1].split("=")[1] == self.usb_ids:
-                self.port_name = p
-        print(self.port_name)
+        try:
+            for p, desc, hwid in sorted(serial.tools.list_ports.comports()):
+                print("{}: {} [{}]".format(p, desc, hwid))
+                if hwid.split(" ")[1].split("=")[1] == self.usb_ids:
+                    self.port_name = p
+            print(self.port_name)
+        except IndexError:
+            print("No powersupply found")
+            sys.exit(1)
 
         try:
             self.psu_com = serial.Serial(
